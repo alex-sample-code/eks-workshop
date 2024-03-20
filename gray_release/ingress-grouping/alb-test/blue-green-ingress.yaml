@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blue-green-ingress
+  namespace: blue-green-ns
+  labels:
+    app: color-1
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: app-color-lb
+    # TODO: Fill in with the ARN of your certificate.
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:959545103699:certificate/86e3d63d-95ce-45e1-8206-d96d6d087649
+    # TODO: Fill in the listening ports.
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    # Set HTTP to HTTPS redirects. Every HTTP listener configured will be redirected to below mentioned port over HTTPS.
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # external-dns.alpha.kubernetes.io/hostname: ddd.chinabjalex.com
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /green
+            pathType: Prefix
+            backend:
+              service:
+                name: green-service
+                port:
+                  number: 8011
+          - path: /blue
+            pathType: Prefix
+            backend:
+              service:
+                name: blue-service
+                port:
+                  number: 80
