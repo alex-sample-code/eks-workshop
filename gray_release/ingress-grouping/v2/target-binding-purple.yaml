@@ -1,0 +1,10 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-eks-green-tg-purple
+  namespace: blue-green-ns-v2
+spec:
+  serviceRef:
+    name: green-service # 目标对应service
+    port: 80
+  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:959545103699:targetgroup/purple-test/22d5655d9940d226
